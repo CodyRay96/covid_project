@@ -3,41 +3,30 @@ import json
 import pandas as pd
 
 api_response = requests.get('https://api.covid19india.org/state_district_wise.json')
-#print(type(api_response))
+print(type(api_response))
 
 print(api_response.status_code)
 data = api_response.json()
 #print(data)
 
-#data = api_response.text
+data = api_response.text
 
-# with open('covid_project.txt', 'w') as f:
-#           f.write(data)
+with open('covid_project.txt', 'w') as f:
+          f.write(data)
 
-# actives = data['Andaman and Nicobar Islands']['districtData']['South Andaman']['active']
-# #print(actives)
+actives = data['Andaman and Nicobar Islands']['districtData']['South Andaman']['active']
+print(actives)
 
-# deceased = data['Andaman and Nicobar Islands']['districtData']['South Andaman']['deceased']
-# #print(deceased)
+deceased = data['Andaman and Nicobar Islands']['districtData']['South Andaman']['deceased']
+print(deceased)
 
 
-# df = pd.DataFrame.from_dict(data, orient = 'columns')
-# #print(df)
+df = pd.DataFrame.from_dict(data, orient = 'columns')
+print(df)
+
+
+#Create dictionary to flatten data
 district_dataframes = {}
-
-# for state, district_data in data.items():
-#     for district, district_stats in district_data.get("districtData", {}).items():
-#         # Create a DataFrame for each district
-#         df = pd.DataFrame(district_stats)
-        
-#         # Store the DataFrame in the dictionary
-#         district_dataframes[(state, district)] = df
-
-# # Print DataFrames after the loop
-# for (state, district), df in district_dataframes.items():
-#     print(f"State: {state}, District: {district}")
-#     print(df)
-#     print("\n" + "="*40 + "\n")
 
 for state, district_data in data.items():
     for district, district_stats in district_data.get("districtData", {}).items():
@@ -59,23 +48,25 @@ result_df = pd.concat(district_dataframes.values(), keys=district_dataframes.key
 # Print the result DataFrame
 
 
-# result_df.rename(index={0: "State", 1: "District"}, inplace=True)
-# #df.rename(index={0: "x", 1: "y", 2: "z"})
-# print(result_df)
-
-
+#sum total active cases
 sum_active = sum(result_df['active'])
 print(sum_active)
+
+#Print data to CSV
 result_df.to_csv('covid_project.csv')
 
+#pull the CSV which will have renamed column headers to allow for the rename
 covid_report = pd.read_csv('covid_project.csv')
 
+#rename columns
 covid_report = covid_report.rename(columns = {'Unnamed: 0' : 'State', 'Unnamed: 1' : 'District', 'Unnamed: 2': 'delete'})
 
 
-
+#delete empty column
 #monthly_report = monthly_report.drop('delete', axis=1)
 covid_report = covid_report.drop('delete', axis=1)
 
 print(covid_report.head())
+
+#print final form of the CSV
 covid_report.to_csv('covid_report_final.csv')
