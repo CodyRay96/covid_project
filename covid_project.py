@@ -9,10 +9,7 @@ print(api_response.status_code)
 data = api_response.json()
 #print(data)
 
-data = api_response.text
 
-with open('covid_project.txt', 'w') as f:
-          f.write(data)
 
 actives = data['Andaman and Nicobar Islands']['districtData']['South Andaman']['active']
 print(actives)
@@ -20,6 +17,10 @@ print(actives)
 deceased = data['Andaman and Nicobar Islands']['districtData']['South Andaman']['deceased']
 print(deceased)
 
+#data = api_response.text
+
+# with open('covid_project.txt', 'w') as f:
+#           f.write(data)
 
 df = pd.DataFrame.from_dict(data, orient = 'columns')
 print(df)
