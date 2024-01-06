@@ -7,12 +7,10 @@ print(type(api_response))
 
 print(api_response.status_code)
 data = api_response.json()
+
 #print(data)
 
-data = api_response.text
 
-with open('covid_project.txt', 'w') as f:
-          f.write(data)
 
 actives = data['Andaman and Nicobar Islands']['districtData']['South Andaman']['active']
 print(actives)
@@ -20,6 +18,10 @@ print(actives)
 deceased = data['Andaman and Nicobar Islands']['districtData']['South Andaman']['deceased']
 print(deceased)
 
+data_text = api_response.text
+
+with open('covid_project.txt', 'w') as f:
+           f.write(data_text)
 
 df = pd.DataFrame.from_dict(data, orient = 'columns')
 print(df)
@@ -63,8 +65,10 @@ covid_report = covid_report.rename(columns = {'Unnamed: 0' : 'State', 'Unnamed: 
 
 
 #delete empty column
-#monthly_report = monthly_report.drop('delete', axis=1)
 covid_report = covid_report.drop('delete', axis=1)
+
+ #set any negative value in 'active' to zero
+covid_report['active'] = covid_report['active'].apply(lambda x: max(0, x))
 
 print(covid_report.head())
 
