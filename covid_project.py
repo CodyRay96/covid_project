@@ -7,6 +7,7 @@ print(type(api_response))
 
 print(api_response.status_code)
 data = api_response.json()
+
 #print(data)
 
 
@@ -64,8 +65,9 @@ covid_report = covid_report.rename(columns = {'Unnamed: 0' : 'State', 'Unnamed: 
 
 
 #delete empty column
-#monthly_report = monthly_report.drop('delete', axis=1)
 covid_report = covid_report.drop('delete', axis=1)
+
+covid_report['active'] = covid_report['active'].apply(lambda x: max(0, x))
 
 print(covid_report.head())
 
